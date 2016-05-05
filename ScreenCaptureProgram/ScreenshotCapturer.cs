@@ -19,7 +19,7 @@ namespace ScreenCaptureProgram
 
         public ScreenshotCapturer()
         {
-            controller = new Controller();
+            controller = new Controller(this);
             InitializeComponent();
             keyboardHook = new KeyboardHook();
             mouseHook = new MouseHook();

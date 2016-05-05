@@ -23,35 +23,6 @@ namespace ScreenCaptureProgram
             InitializeComponent();
             keyboardHook = new KeyboardHook();
             mouseHook = new MouseHook();
-
-            keyboardHook.KeyDown += KeyboardHook_KeyDown;
-            mouseHook.LeftButtonDown += MouseHook_LeftButtonDown;
-
-        }
-
-        private void MouseHook_LeftButtonDown(MouseHook.MSLLHOOKSTRUCT mouseStruct)
-        {
-            tbTestHooks.Text += "MBUTTON_LEFT";
-        }
-
-        private void KeyboardHook_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Control || e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
-            {
-                tbTestHooks.Text += "Control";
-            }
-            else if (e.KeyCode == Keys.Alt || e.KeyCode == Keys.LMenu || e.KeyCode == Keys.RMenu)
-            {
-                tbTestHooks.Text += "Alt";
-            }
-            else if(e.KeyCode == Keys.D5)
-            {
-                tbTestHooks.Text += "|D5";
-            }
-            else
-            {
-                tbTestHooks.Text += e.KeyCode;
-            }
         }
 
         private void btnCaptureDesktop_Click(object sender, EventArgs e)

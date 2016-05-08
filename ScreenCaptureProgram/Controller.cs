@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,9 @@ namespace ScreenCaptureProgram
 {
     public class Controller
     {
+        [DllImport("User32.dll")]
+        public static extern Int32 SetForegroundWindow(int hWnd);
+
         //Form
         private ScreenshotCapturer sc;
 
@@ -17,12 +21,13 @@ namespace ScreenCaptureProgram
         private MouseHook mouseHook;
 
         private bool imageToClipboard = true;
-        private bool bringFormToFront = false;
+        private bool bringFormToFront = true;
         private bool keyCapture = false;
         private bool capturing = false;
         private bool cancelled = false;
 
         public bool ImageToClipboard { get { return imageToClipboard; } set { imageToClipboard = value; } }
+        public bool KeyCapture { get { return keyCapture; } set { keyCapture = value; } }
 
         private bool testPress = false;
 
@@ -30,11 +35,17 @@ namespace ScreenCaptureProgram
         public Point startPoint;
         public Point endPoint;
 
+        //Keybindings
+        private List<KeyBinding> keyBindings;
+
+        //Screenshots
         private List<Screenshot> screenshots;
+        private Screenshot latestCapturedScreenshot;
 
         public Controller(ScreenshotCapturer sc)
         {
             screenshots = new List<Screenshot>();
+            this.sc = sc;
 
             keyboardHook = new KeyboardHook();
             mouseHook = new MouseHook();
@@ -47,6 +58,27 @@ namespace ScreenCaptureProgram
 
             //Muis omhoog
             mouseHook.LeftButtonUp += MouseHook_LeftButtonUp;
+
+            AddKeyBindings();
+        }
+
+        private void AddKeyBindings()
+        {
+            //Capture part dekstop keybinding
+            KeyBinding kb = new KeyBinding(1);
+            kb.AddKey(Keys.Control);
+            kb.AddKey(Keys.Alt);
+            kb.AddKey(Keys.D5);
+
+            //Capture dekstop keybinding (Primary Screen)
+            KeyBinding kb2 = new KeyBinding(2);
+            kb.AddKey(Keys.Control);
+            kb.AddKey(Keys.Alt);
+            kb.AddKey(Keys.D6);
+
+            keyBindings = new List<KeyBinding>();
+            keyBindings.Add(kb);
+            keyBindings.Add(kb2);
         }
 
         private void MouseHook_LeftButtonUp(MouseHook.MSLLHOOKSTRUCT mouseStruct)
@@ -93,9 +125,35 @@ namespace ScreenCaptureProgram
             }
         }
 
+
         private void KeyboardHook_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Control || e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
+            foreach(KeyBinding kb in keyBindings)
+            {
+                if (kb.CheckBinding(e.KeyCode))
+                {
+                    Console.WriteLine("Capture Part Dekstop");
+                    ExecuteCommands(kb.ID);
+                }
+            }
+        }
+
+
+        private void ExecuteCommands(int id)
+        {
+            switch (id)
+            {
+                case 1:
+                    keyCapture = true;
+                    break;
+                case 2:
+                    CaptureDesktop();
+                    break;
+            }
+        }
+        /*
+
+                        if (e.KeyCode == Keys.Control || e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
             {
                 Console.WriteLine("Pressed control");
                 testPress = true;
@@ -119,7 +177,9 @@ namespace ScreenCaptureProgram
             {
                 testPress = false;
             }
-        }
+
+
+    */
 
         /// <summary>
         /// Captures the desktop.
@@ -130,13 +190,9 @@ namespace ScreenCaptureProgram
             Bitmap image = new Bitmap(rect.Width, rect.Height);
             Graphics g = Graphics.FromImage(image);
             g.CopyFromScreen(Point.Empty, Point.Empty, rect.Size);
-            screenshots.Add(new Screenshot(image, DateTime.Now));
-
-            if (imageToClipboard)
-                SetCapturedImageToClipboard(image);
-
-            if (bringFormToFront)
-                sc.BringToFront();
+            latestCapturedScreenshot = new Screenshot(image, DateTime.Now);
+            screenshots.Add(latestCapturedScreenshot);
+            CapturedImage(image);
         }
 
         /// <summary>
@@ -196,13 +252,19 @@ namespace ScreenCaptureProgram
             Bitmap image = new Bitmap(rect.Width, rect.Height);
             Graphics g = Graphics.FromImage(image);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, rect.Size);
-            screenshots.Add(new Screenshot(image, DateTime.Now));
+            latestCapturedScreenshot = new Screenshot(image, DateTime.Now);
+            screenshots.Add(latestCapturedScreenshot);
+            CapturedImage(image);
+        }
 
+        private void CapturedImage(Bitmap image)
+        {
             if (imageToClipboard)
                 SetCapturedImageToClipboard(image);
-
             if (bringFormToFront)
-                sc.BringToFront();
+                SetForegroundWindow(sc.Handle.ToInt32());
+
+            sc.SetImageBoxImage(image);
         }
 
         /// <summary>
@@ -212,6 +274,42 @@ namespace ScreenCaptureProgram
         public void SetCapturedImageToClipboard(Bitmap captured)
         {
             Clipboard.SetImage(captured);
+        }
+
+        /// <summary>
+        /// Saves the screenshot that was captured the latest.
+        /// </summary>
+        /// <returns>if it has been saved succesfully</returns>
+        public bool SaveFileDialog()
+        {
+            if (latestCapturedScreenshot != null && latestCapturedScreenshot.Bitmap != null)
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = ".png file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+                sfd.Title = "Save captured image";
+                if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
+                {
+                    latestCapturedScreenshot.Bitmap.Save(sfd.FileName);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool SaveFileDialog(Screenshot s)
+        {
+            if (s != null && s.Bitmap != null)
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = ".png file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+                sfd.Title = "Save captured image";
+                if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
+                {
+                    s.Bitmap.Save(sfd.FileName);
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

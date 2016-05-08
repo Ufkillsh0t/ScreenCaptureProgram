@@ -44,12 +44,17 @@
             this.cbBringApplicationForward = new System.Windows.Forms.CheckBox();
             this.btnSaveSettings = new System.Windows.Forms.Button();
             this.btnResetSettings = new System.Windows.Forms.Button();
+            this.gbAutoSave = new System.Windows.Forms.GroupBox();
+            this.cbAutoSave = new System.Windows.Forms.CheckBox();
+            this.tbAutoSaveDirectory = new System.Windows.Forms.TextBox();
+            this.btnAutoSavePath = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCapturedImage)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.gbSettings.SuspendLayout();
             this.gbFormSettings.SuspendLayout();
+            this.gbAutoSave.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCaptureDesktop
@@ -150,6 +155,7 @@
             // 
             // gbSettings
             // 
+            this.gbSettings.Controls.Add(this.gbAutoSave);
             this.gbSettings.Controls.Add(this.btnResetSettings);
             this.gbSettings.Controls.Add(this.btnSaveSettings);
             this.gbSettings.Controls.Add(this.cbBringApplicationForward);
@@ -175,9 +181,9 @@
             // gbFormSettings
             // 
             this.gbFormSettings.Controls.Add(this.cbResize);
-            this.gbFormSettings.Location = new System.Drawing.Point(6, 192);
+            this.gbFormSettings.Location = new System.Drawing.Point(6, 211);
             this.gbFormSettings.Name = "gbFormSettings";
-            this.gbFormSettings.Size = new System.Drawing.Size(330, 100);
+            this.gbFormSettings.Size = new System.Drawing.Size(330, 81);
             this.gbFormSettings.TabIndex = 1;
             this.gbFormSettings.TabStop = false;
             this.gbFormSettings.Text = "FormSettings";
@@ -222,6 +228,46 @@
             this.btnResetSettings.TabIndex = 5;
             this.btnResetSettings.Text = "Reset settings";
             this.btnResetSettings.UseVisualStyleBackColor = true;
+            this.btnResetSettings.Click += new System.EventHandler(this.btnResetSettings_Click);
+            // 
+            // gbAutoSave
+            // 
+            this.gbAutoSave.Controls.Add(this.btnAutoSavePath);
+            this.gbAutoSave.Controls.Add(this.tbAutoSaveDirectory);
+            this.gbAutoSave.Controls.Add(this.cbAutoSave);
+            this.gbAutoSave.Location = new System.Drawing.Point(7, 120);
+            this.gbAutoSave.Name = "gbAutoSave";
+            this.gbAutoSave.Size = new System.Drawing.Size(329, 85);
+            this.gbAutoSave.TabIndex = 6;
+            this.gbAutoSave.TabStop = false;
+            this.gbAutoSave.Text = "Save captured screenshots automatically";
+            // 
+            // cbAutoSave
+            // 
+            this.cbAutoSave.AutoSize = true;
+            this.cbAutoSave.Location = new System.Drawing.Point(6, 19);
+            this.cbAutoSave.Name = "cbAutoSave";
+            this.cbAutoSave.Size = new System.Drawing.Size(74, 17);
+            this.cbAutoSave.TabIndex = 0;
+            this.cbAutoSave.Text = "Auto save";
+            this.cbAutoSave.UseVisualStyleBackColor = true;
+            // 
+            // tbAutoSaveDirectory
+            // 
+            this.tbAutoSaveDirectory.Enabled = false;
+            this.tbAutoSaveDirectory.Location = new System.Drawing.Point(5, 42);
+            this.tbAutoSaveDirectory.Name = "tbAutoSaveDirectory";
+            this.tbAutoSaveDirectory.Size = new System.Drawing.Size(237, 20);
+            this.tbAutoSaveDirectory.TabIndex = 1;
+            // 
+            // btnAutoSavePath
+            // 
+            this.btnAutoSavePath.Location = new System.Drawing.Point(248, 40);
+            this.btnAutoSavePath.Name = "btnAutoSavePath";
+            this.btnAutoSavePath.Size = new System.Drawing.Size(75, 23);
+            this.btnAutoSavePath.TabIndex = 2;
+            this.btnAutoSavePath.Text = "Set path";
+            this.btnAutoSavePath.UseVisualStyleBackColor = true;
             // 
             // ScreenshotCapturer
             // 
@@ -241,6 +287,8 @@
             this.gbSettings.PerformLayout();
             this.gbFormSettings.ResumeLayout(false);
             this.gbFormSettings.PerformLayout();
+            this.gbAutoSave.ResumeLayout(false);
+            this.gbAutoSave.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -263,6 +311,10 @@
         private System.Windows.Forms.Button btnSaveSettings;
         private System.Windows.Forms.CheckBox cbBringApplicationForward;
         private System.Windows.Forms.CheckBox cbImageToClipBoard;
+        private System.Windows.Forms.GroupBox gbAutoSave;
+        private System.Windows.Forms.Button btnAutoSavePath;
+        private System.Windows.Forms.TextBox tbAutoSaveDirectory;
+        private System.Windows.Forms.CheckBox cbAutoSave;
     }
 }
 

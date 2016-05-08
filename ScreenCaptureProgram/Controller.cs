@@ -25,6 +25,9 @@ namespace ScreenCaptureProgram
 
         private bool imageToClipboard = true;
         private bool bringFormToFront = true;
+        private bool autoSave = false;
+
+        //capture booleans
         private bool keyCapture = false;
         private bool capturing = false;
         private bool cancelled = false;
@@ -32,6 +35,7 @@ namespace ScreenCaptureProgram
         public bool ImageToClipboard { get { return imageToClipboard; } set { imageToClipboard = value; } }
         public bool BringFormToFront { get { return bringFormToFront; } set { bringFormToFront = value; } }
         public bool KeyCapture { get { return keyCapture; } set { keyCapture = value; } }
+        public bool AutoSave { get { return autoSave; } set { autoSave = value; } }
 
         private bool testPress = false;
 
@@ -69,6 +73,22 @@ namespace ScreenCaptureProgram
 
         #region XMLSettings
 
+        public void ResetSettings()
+        {
+            string path = Application.StartupPath + "\\XML";
+            if (Directory.Exists(path))
+            {
+                NewSettingsXMLFile(path);
+                ReadXml(path + "\\Settings.xml");
+            }
+            else
+            {
+                Directory.CreateDirectory(path);
+                NewSettingsXMLFile(path);
+                ReadXml(path + "\\Settings.xml");
+            }
+        }
+
         private void GetSettings()
         {
             string path = Application.StartupPath + "\\XML";
@@ -102,6 +122,7 @@ namespace ScreenCaptureProgram
                                             new XElement("ImageToClipBoard", true),
                                             new XElement("BringApplicationForward", true),
                                             new XElement("ResizeFormInstant", false),
+                                            new XElement("AutoSave", false),
                                             new XElement("KeyBindings",
                                                 new XElement("KeyBind",
                                                     new XElement("ID", 1),
@@ -124,6 +145,7 @@ namespace ScreenCaptureProgram
                                 new XElement("ImageToClipBoard", imageToClipboard),
                                 new XElement("BringApplicationForward", bringFormToFront),
                                 new XElement("ResizeFormInstant", sc.resizeChecked),
+                                new XElement("AutoSave", autoSave),
                                 GetKeyBindingElements()));
             doc.Save(path + "\\Settings.xml");
         }
@@ -143,7 +165,7 @@ namespace ScreenCaptureProgram
         private XElement GetKeyBindingKeysElement(KeyBinding kb)
         {
             XElement keys = new XElement("Keys");
-            foreach(Key k in kb.BindingKeys)
+            foreach (Key k in kb.BindingKeys)
             {
                 keys.Add(new XElement("Key", (int)k.KeyToPress));
             }
@@ -162,17 +184,19 @@ namespace ScreenCaptureProgram
                     imageToClipboard = Convert.ToBoolean(node.InnerText);
                 if (node.Name == "BringApplicationForward")
                     bringFormToFront = Convert.ToBoolean(node.InnerText);
+                if (node.Name == "AutoSave")
+                    autoSave = Convert.ToBoolean(node.InnerText);
                 if (node.Name == "ResizeFormInstant")
                 {
                     bool value = Convert.ToBoolean(node.InnerText);
                     if (sc.resizeChecked != value)
                         sc.resizeChecked = value;
-                }         
+                }
                 if (node.Name == "KeyBindings")
                 {
                     XmlNodeList keybindingsXML = node.ChildNodes;
                     keyBindings = new List<KeyBinding>();
-                    foreach(XmlNode k in keybindingsXML)
+                    foreach (XmlNode k in keybindingsXML)
                     {
                         XmlNode keyBindID = k.SelectSingleNode("ID");
                         int id = Convert.ToInt32(keyBindID.InnerText);
@@ -181,7 +205,7 @@ namespace ScreenCaptureProgram
 
                         XmlNode keyBinds = k.SelectSingleNode("Keys");
                         XmlNodeList keys = keyBinds.SelectNodes("Key");
-                        foreach(XmlNode key in keys)
+                        foreach (XmlNode key in keys)
                         {
                             kb.AddKey((Keys)Convert.ToInt32(key.InnerText));
                         }
@@ -402,22 +426,22 @@ namespace ScreenCaptureProgram
     }
 }
 
-        /*
-        private void AddKeyBindings()
-        {
-            //Capture part dekstop keybinding
-            KeyBinding kb = new KeyBinding(1);
-            kb.AddKey(Keys.Control);
-            kb.AddKey(Keys.Alt);
-            kb.AddKey(Keys.D5);
+/*
+private void AddKeyBindings()
+{
+    //Capture part dekstop keybinding
+    KeyBinding kb = new KeyBinding(1);
+    kb.AddKey(Keys.Control);
+    kb.AddKey(Keys.Alt);
+    kb.AddKey(Keys.D5);
 
-            //Capture dekstop keybinding (Primary Screen)
-            KeyBinding kb2 = new KeyBinding(2);
-            kb2.AddKey(Keys.Control);
-            kb2.AddKey(Keys.Alt);
-            kb2.AddKey(Keys.D6);
+    //Capture dekstop keybinding (Primary Screen)
+    KeyBinding kb2 = new KeyBinding(2);
+    kb2.AddKey(Keys.Control);
+    kb2.AddKey(Keys.Alt);
+    kb2.AddKey(Keys.D6);
 
-            keyBindings = new List<KeyBinding>();
-            keyBindings.Add(kb);
-            keyBindings.Add(kb2);
-        }*/
+    keyBindings = new List<KeyBinding>();
+    keyBindings.Add(kb);
+    keyBindings.Add(kb2);
+}*/

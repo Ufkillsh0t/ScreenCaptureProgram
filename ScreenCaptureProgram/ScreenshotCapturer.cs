@@ -15,7 +15,7 @@ namespace ScreenCaptureProgram
     {
         private Controller controller;
 
-        public bool resizeChecked { get { return cbResize.Checked; } set { resizeChecked = value; } }
+        public bool resizeChecked { get { return cbResize.Checked; } set { cbResize.Checked = value; } }
 
         public ScreenshotCapturer()
         {
@@ -106,6 +106,14 @@ namespace ScreenCaptureProgram
         private void cbBringApplicationForward_CheckedChanged(object sender, EventArgs e)
         {
             controller.BringFormToFront = cbBringApplicationForward.Checked;
+        }
+
+        private void btnResetSettings_Click(object sender, EventArgs e)
+        {
+            controller.ResetSettings();
+            cbAutoSave.Checked = controller.AutoSave;
+            cbBringApplicationForward.Checked = controller.BringFormToFront;
+            cbImageToClipBoard.Checked = controller.ImageToClipboard;
         }
     }
 }

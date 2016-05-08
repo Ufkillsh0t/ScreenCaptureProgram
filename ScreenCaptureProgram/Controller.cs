@@ -72,9 +72,9 @@ namespace ScreenCaptureProgram
 
             //Capture dekstop keybinding (Primary Screen)
             KeyBinding kb2 = new KeyBinding(2);
-            kb.AddKey(Keys.Control);
-            kb.AddKey(Keys.Alt);
-            kb.AddKey(Keys.D6);
+            kb2.AddKey(Keys.Control);
+            kb2.AddKey(Keys.Alt);
+            kb2.AddKey(Keys.D6);
 
             keyBindings = new List<KeyBinding>();
             keyBindings.Add(kb);
@@ -132,7 +132,6 @@ namespace ScreenCaptureProgram
             {
                 if (kb.CheckBinding(e.KeyCode))
                 {
-                    Console.WriteLine("Capture Part Dekstop");
                     ExecuteCommands(kb.ID);
                 }
             }
@@ -145,9 +144,11 @@ namespace ScreenCaptureProgram
             {
                 case 1:
                     keyCapture = true;
+                    Console.WriteLine("Capture Part Dekstop");
                     break;
                 case 2:
                     CaptureDesktop();
+                    Console.WriteLine("Capture Dekstop");
                     break;
             }
         }

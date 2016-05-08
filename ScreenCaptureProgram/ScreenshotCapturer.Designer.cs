@@ -40,6 +40,10 @@
             this.gbSettings = new System.Windows.Forms.GroupBox();
             this.cbResize = new System.Windows.Forms.CheckBox();
             this.gbFormSettings = new System.Windows.Forms.GroupBox();
+            this.cbImageToClipBoard = new System.Windows.Forms.CheckBox();
+            this.cbBringApplicationForward = new System.Windows.Forms.CheckBox();
+            this.btnSaveSettings = new System.Windows.Forms.Button();
+            this.btnResetSettings = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCapturedImage)).BeginInit();
@@ -146,6 +150,10 @@
             // 
             // gbSettings
             // 
+            this.gbSettings.Controls.Add(this.btnResetSettings);
+            this.gbSettings.Controls.Add(this.btnSaveSettings);
+            this.gbSettings.Controls.Add(this.cbBringApplicationForward);
+            this.gbSettings.Controls.Add(this.cbImageToClipBoard);
             this.gbSettings.Controls.Add(this.gbFormSettings);
             this.gbSettings.Location = new System.Drawing.Point(4, 3);
             this.gbSettings.Name = "gbSettings";
@@ -167,12 +175,53 @@
             // gbFormSettings
             // 
             this.gbFormSettings.Controls.Add(this.cbResize);
-            this.gbFormSettings.Location = new System.Drawing.Point(6, 232);
+            this.gbFormSettings.Location = new System.Drawing.Point(6, 192);
             this.gbFormSettings.Name = "gbFormSettings";
             this.gbFormSettings.Size = new System.Drawing.Size(330, 100);
             this.gbFormSettings.TabIndex = 1;
             this.gbFormSettings.TabStop = false;
             this.gbFormSettings.Text = "FormSettings";
+            // 
+            // cbImageToClipBoard
+            // 
+            this.cbImageToClipBoard.AutoSize = true;
+            this.cbImageToClipBoard.Location = new System.Drawing.Point(7, 20);
+            this.cbImageToClipBoard.Name = "cbImageToClipBoard";
+            this.cbImageToClipBoard.Size = new System.Drawing.Size(141, 17);
+            this.cbImageToClipBoard.TabIndex = 2;
+            this.cbImageToClipBoard.Text = "Copy image to ClipBoard";
+            this.cbImageToClipBoard.UseVisualStyleBackColor = true;
+            this.cbImageToClipBoard.CheckedChanged += new System.EventHandler(this.cbImageToClipBoard_CheckedChanged);
+            // 
+            // cbBringApplicationForward
+            // 
+            this.cbBringApplicationForward.AutoSize = true;
+            this.cbBringApplicationForward.Location = new System.Drawing.Point(7, 43);
+            this.cbBringApplicationForward.Name = "cbBringApplicationForward";
+            this.cbBringApplicationForward.Size = new System.Drawing.Size(234, 17);
+            this.cbBringApplicationForward.TabIndex = 3;
+            this.cbBringApplicationForward.Text = "Bring application forward after capturing one";
+            this.cbBringApplicationForward.UseVisualStyleBackColor = true;
+            this.cbBringApplicationForward.CheckedChanged += new System.EventHandler(this.cbBringApplicationForward_CheckedChanged);
+            // 
+            // btnSaveSettings
+            // 
+            this.btnSaveSettings.Location = new System.Drawing.Point(7, 298);
+            this.btnSaveSettings.Name = "btnSaveSettings";
+            this.btnSaveSettings.Size = new System.Drawing.Size(86, 23);
+            this.btnSaveSettings.TabIndex = 4;
+            this.btnSaveSettings.Text = "Save settings";
+            this.btnSaveSettings.UseVisualStyleBackColor = true;
+            this.btnSaveSettings.Click += new System.EventHandler(this.btnSaveSettings_Click);
+            // 
+            // btnResetSettings
+            // 
+            this.btnResetSettings.Location = new System.Drawing.Point(99, 298);
+            this.btnResetSettings.Name = "btnResetSettings";
+            this.btnResetSettings.Size = new System.Drawing.Size(75, 23);
+            this.btnResetSettings.TabIndex = 5;
+            this.btnResetSettings.Text = "Reset settings";
+            this.btnResetSettings.UseVisualStyleBackColor = true;
             // 
             // ScreenshotCapturer
             // 
@@ -189,6 +238,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCapturedImage)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.gbSettings.ResumeLayout(false);
+            this.gbSettings.PerformLayout();
             this.gbFormSettings.ResumeLayout(false);
             this.gbFormSettings.PerformLayout();
             this.ResumeLayout(false);
@@ -209,6 +259,10 @@
         private System.Windows.Forms.GroupBox gbSettings;
         private System.Windows.Forms.GroupBox gbFormSettings;
         private System.Windows.Forms.CheckBox cbResize;
+        private System.Windows.Forms.Button btnResetSettings;
+        private System.Windows.Forms.Button btnSaveSettings;
+        private System.Windows.Forms.CheckBox cbBringApplicationForward;
+        private System.Windows.Forms.CheckBox cbImageToClipBoard;
     }
 }
 

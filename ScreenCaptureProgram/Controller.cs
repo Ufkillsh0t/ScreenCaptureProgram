@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
+using System.IO;
 
 namespace ScreenCaptureProgram
 {
@@ -27,6 +30,7 @@ namespace ScreenCaptureProgram
         private bool cancelled = false;
 
         public bool ImageToClipboard { get { return imageToClipboard; } set { imageToClipboard = value; } }
+        public bool BringFormToFront { get { return bringFormToFront; } set { bringFormToFront = value; } }
         public bool KeyCapture { get { return keyCapture; } set { keyCapture = value; } }
 
         private bool testPress = false;
@@ -59,27 +63,135 @@ namespace ScreenCaptureProgram
             //Muis omhoog
             mouseHook.LeftButtonUp += MouseHook_LeftButtonUp;
 
-            AddKeyBindings();
+            //AddKeyBindings();
+            GetSettings();
         }
 
-        private void AddKeyBindings()
+        #region XMLSettings
+
+        private void GetSettings()
         {
-            //Capture part dekstop keybinding
-            KeyBinding kb = new KeyBinding(1);
-            kb.AddKey(Keys.Control);
-            kb.AddKey(Keys.Alt);
-            kb.AddKey(Keys.D5);
-
-            //Capture dekstop keybinding (Primary Screen)
-            KeyBinding kb2 = new KeyBinding(2);
-            kb2.AddKey(Keys.Control);
-            kb2.AddKey(Keys.Alt);
-            kb2.AddKey(Keys.D6);
-
-            keyBindings = new List<KeyBinding>();
-            keyBindings.Add(kb);
-            keyBindings.Add(kb2);
+            string path = Application.StartupPath + "\\XML";
+            if (Directory.Exists(path))
+            {
+                if (File.Exists(path + "\\Settings.xml"))
+                {
+                    ReadXml(path + "\\Settings.xml");
+                }
+                else
+                {
+                    NewSettingsXMLFile(path);
+                    ReadXml(path + "\\Settings.xml");
+                }
+            }
+            else
+            {
+                Directory.CreateDirectory(Application.StartupPath + "\\XML");
+                if (Directory.Exists(path))
+                {
+                    NewSettingsXMLFile(path);
+                    ReadXml(path + "\\Settings.xml");
+                }
+            }
+            //doc.Load(Application.StartupPath)
         }
+
+        private void NewSettingsXMLFile(string path)
+        {
+            XDocument doc = new XDocument(new XElement("Settings",
+                                            new XElement("ImageToClipBoard", true),
+                                            new XElement("BringApplicationForward", true),
+                                            new XElement("ResizeFormInstant", false),
+                                            new XElement("KeyBindings",
+                                                new XElement("KeyBind",
+                                                    new XElement("ID", 1),
+                                                    new XElement("Keys",
+                                                        new XElement("Key", (int)Keys.Control),
+                                                        new XElement("Key", (int)Keys.Alt),
+                                                        new XElement("Key", (int)Keys.D5))),
+                                                new XElement("KeyBind",
+                                                    new XElement("ID", 2),
+                                                    new XElement("Keys",
+                                                        new XElement("Key", (int)Keys.Control),
+                                                        new XElement("Key", (int)Keys.Alt),
+                                                        new XElement("Key", (int)Keys.D6))))));
+            doc.Save(path + "\\Settings.xml");
+        }
+
+        public void SaveXML(string path)
+        {
+            XDocument doc = new XDocument(new XElement("Settings",
+                                new XElement("ImageToClipBoard", imageToClipboard),
+                                new XElement("BringApplicationForward", bringFormToFront),
+                                new XElement("ResizeFormInstant", sc.resizeChecked),
+                                GetKeyBindingElements()));
+            doc.Save(path + "\\Settings.xml");
+        }
+
+        private XElement GetKeyBindingElements()
+        {
+            XElement keyBinding = new XElement("KeyBindings");
+            foreach (KeyBinding kb in keyBindings)
+            {
+                keyBinding.Add(new XElement("KeyBind",
+                                   new XElement("ID", kb.ID),
+                                   GetKeyBindingKeysElement(kb)));
+            }
+            return keyBinding;
+        }
+
+        private XElement GetKeyBindingKeysElement(KeyBinding kb)
+        {
+            XElement keys = new XElement("Keys");
+            foreach(Key k in kb.BindingKeys)
+            {
+                keys.Add(new XElement("Key", (int)k.KeyToPress));
+            }
+            return keys;
+        }
+
+        private void ReadXml(string path)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
+            XmlNode n = doc.SelectSingleNode("Settings");
+            XmlNodeList nodes = n.ChildNodes;
+            foreach (XmlNode node in nodes)
+            {
+                if (node.Name == "ImageToClipBoard")
+                    imageToClipboard = Convert.ToBoolean(node.InnerText);
+                if (node.Name == "BringApplicationForward")
+                    bringFormToFront = Convert.ToBoolean(node.InnerText);
+                if (node.Name == "ResizeFormInstant")
+                {
+                    bool value = Convert.ToBoolean(node.InnerText);
+                    if (sc.resizeChecked != value)
+                        sc.resizeChecked = value;
+                }         
+                if (node.Name == "KeyBindings")
+                {
+                    XmlNodeList keybindingsXML = node.ChildNodes;
+                    keyBindings = new List<KeyBinding>();
+                    foreach(XmlNode k in keybindingsXML)
+                    {
+                        XmlNode keyBindID = k.SelectSingleNode("ID");
+                        int id = Convert.ToInt32(keyBindID.InnerText);
+
+                        KeyBinding kb = new KeyBinding(id);
+
+                        XmlNode keyBinds = k.SelectSingleNode("Keys");
+                        XmlNodeList keys = keyBinds.SelectNodes("Key");
+                        foreach(XmlNode key in keys)
+                        {
+                            kb.AddKey((Keys)Convert.ToInt32(key.InnerText));
+                        }
+                        keyBindings.Add(kb);
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         private void MouseHook_LeftButtonUp(MouseHook.MSLLHOOKSTRUCT mouseStruct)
         {
@@ -128,7 +240,7 @@ namespace ScreenCaptureProgram
 
         private void KeyboardHook_KeyDown(object sender, KeyEventArgs e)
         {
-            foreach(KeyBinding kb in keyBindings)
+            foreach (KeyBinding kb in keyBindings)
             {
                 if (kb.CheckBinding(e.KeyCode))
                 {
@@ -137,7 +249,10 @@ namespace ScreenCaptureProgram
             }
         }
 
-
+        /// <summary>
+        /// Executes a certain command/function
+        /// </summary>
+        /// <param name="id"></param>
         private void ExecuteCommands(int id)
         {
             switch (id)
@@ -152,35 +267,6 @@ namespace ScreenCaptureProgram
                     break;
             }
         }
-        /*
-
-                        if (e.KeyCode == Keys.Control || e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
-            {
-                Console.WriteLine("Pressed control");
-                testPress = true;
-            }
-            else if (e.KeyCode == Keys.Alt || e.KeyCode == Keys.LMenu || e.KeyCode == Keys.RMenu)
-            {
-                Console.WriteLine("Pressed alt");
-                testPress = true;
-
-            }
-            else if (e.KeyCode == Keys.D5)
-            {
-                Console.WriteLine("Pressed 5");
-                if (testPress && !capturing)
-                {
-                    Console.WriteLine("keyCapture enabled");
-                    keyCapture = true;
-                }
-            }
-            else
-            {
-                testPress = false;
-            }
-
-
-    */
 
         /// <summary>
         /// Captures the desktop.
@@ -312,5 +398,26 @@ namespace ScreenCaptureProgram
             }
             return false;
         }
+
     }
 }
+
+        /*
+        private void AddKeyBindings()
+        {
+            //Capture part dekstop keybinding
+            KeyBinding kb = new KeyBinding(1);
+            kb.AddKey(Keys.Control);
+            kb.AddKey(Keys.Alt);
+            kb.AddKey(Keys.D5);
+
+            //Capture dekstop keybinding (Primary Screen)
+            KeyBinding kb2 = new KeyBinding(2);
+            kb2.AddKey(Keys.Control);
+            kb2.AddKey(Keys.Alt);
+            kb2.AddKey(Keys.D6);
+
+            keyBindings = new List<KeyBinding>();
+            keyBindings.Add(kb);
+            keyBindings.Add(kb2);
+        }*/

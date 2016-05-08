@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace ScreenCaptureProgram
 {
@@ -20,6 +21,8 @@ namespace ScreenCaptureProgram
         {
             InitializeComponent();
             controller = new Controller(this);
+            cbBringApplicationForward.Checked = controller.BringFormToFront;
+            cbImageToClipBoard.Checked = controller.ImageToClipboard;
         }
 
         private void btnCaptureDesktop_Click(object sender, EventArgs e)
@@ -79,6 +82,30 @@ namespace ScreenCaptureProgram
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             ResizeForm();
+        }
+
+        private void btnSaveSettings_Click(object sender, EventArgs e)
+        {
+            string path = Application.StartupPath + "\\XML";
+            if (Directory.Exists(path))
+            {
+                controller.SaveXML(path);
+            }
+            else
+            {
+                Directory.CreateDirectory(path);
+                controller.SaveXML(path);
+            }
+        }
+
+        private void cbImageToClipBoard_CheckedChanged(object sender, EventArgs e)
+        {
+            controller.ImageToClipboard = cbImageToClipBoard.Checked;
+        }
+
+        private void cbBringApplicationForward_CheckedChanged(object sender, EventArgs e)
+        {
+            controller.BringFormToFront = cbBringApplicationForward.Checked;
         }
     }
 }

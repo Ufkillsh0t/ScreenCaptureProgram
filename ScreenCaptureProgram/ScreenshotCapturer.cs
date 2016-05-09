@@ -8,12 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Drawing.Drawing2D;
+using System.Diagnostics;
 
 namespace ScreenCaptureProgram
 {
     public partial class ScreenshotCapturer : Form
     {
         private Controller controller;
+        private int index;
+        private Graphics dekstop;
+        private GraphicsState state;
 
         public bool resizeChecked { get { return cbResize.Checked; } set { cbResize.Checked = value; } }
 
@@ -26,6 +31,9 @@ namespace ScreenCaptureProgram
             cbAutoSave.Checked = controller.AutoSave;
             cbCache.Checked = controller.Caching;
             tbAutoSaveDirectory.Text = controller.AutoSavePath;
+            index = controller.Screenshots.Count - 1;
+            dekstop = Graphics.FromHwnd(IntPtr.Zero);
+            state = dekstop.Save();
         }
 
         private void btnCaptureDesktop_Click(object sender, EventArgs e)
@@ -46,13 +54,19 @@ namespace ScreenCaptureProgram
         private void btnDrawOnDesktop_Click(object sender, EventArgs e)
         {
             Point pt = Cursor.Position;
+            dekstop.DrawEllipse(Pens.Black, pt.X - 1000, pt.Y - 10, 300, 300);
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            Point pt = Cursor.Position;
             Graphics g = Graphics.FromHwnd(IntPtr.Zero);
-            g.DrawEllipse(Pens.Black, pt.X - 10, pt.Y - 10, 20, 20);
+            dekstop.Restore(state);
         }
 
         public void SetImageBoxImage(Bitmap b)
         {
-            pictureBoxCapturedImage.Image = b;
+            pbCapturedImage.Image = b;
         }
 
         private void ScreenshotCapturer_SizeChanged(object sender, EventArgs e)
@@ -75,16 +89,41 @@ namespace ScreenCaptureProgram
         {
             tabControl.Width = this.Width - (tabControl.Location.X * 4);
             tabControl.Height = this.Height - (tabControl.Location.Y * 6);
-            if (tabControl.SelectedIndex == 0)
+            switch (tabControl.SelectedIndex)
             {
-                pictureBoxCapturedImage.Width = tabControl.Width - 10;
-                pictureBoxCapturedImage.Height = tabControl.Height - pictureBoxCapturedImage.Location.Y - 20;
+                case 0:
+                    pbCapturedImage.Width = tabControl.Width - 10;
+                    pbCapturedImage.Height = tabControl.Height - pbCapturedImage.Location.Y - 20;
+                    break;
+                case 1:
+                    gbCachedImage.Width = tabControl.Width - 20;
+                    gbCachedImage.Height = tabControl.Height - (gbCachedImage.Location.Y * 12);
+                    pbCachedImage.Width = gbCachedImage.Width - 10;
+                    pbCachedImage.Height = gbCachedImage.Height - gbCachedImage.Location.Y - (pbCachedImage.Location.Y * 2);
+                    btnPrevious.Location = new Point(btnPrevious.Location.X, gbCachedImage.Location.Y + gbCachedImage.Height + 10);
+                    btnNext.Location = new Point(btnNext.Location.X, gbCachedImage.Location.Y + gbCachedImage.Height + 10);
+                    btnOpen.Location = new Point(btnOpen.Location.X, gbCachedImage.Location.Y + gbCachedImage.Height + 10);
+                    btnOpenMap.Location = new Point(btnOpenMap.Location.X, gbCachedImage.Location.Y + gbCachedImage.Height + 10);
+                    break;
+                case 2:
+                    gbSettings.Width = tabControl.Width - 20;
+                    gbSettings.Height = tabControl.Height - 30;
+                    gbAutoSave.Width = gbSettings.Width - (gbAutoSave.Location.X * 2);
+                    gbFormSettings.Width = gbSettings.Width - (gbFormSettings.Location.X * 2);
+                    btnAutoSavePath.Location = new Point(gbAutoSave.Width - btnAutoSavePath.Width - 10, btnAutoSavePath.Location.Y);
+                    tbAutoSaveDirectory.Width = btnAutoSavePath.Location.X - tbAutoSaveDirectory.Location.X - 10;
+                    break;
             }
         }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             ResizeForm();
+            if (tabControl.SelectedIndex == 1)
+            {
+                if (pbCachedImage.Image == null)
+                    SetImage();
+            }
         }
 
         private void btnSaveSettings_Click(object sender, EventArgs e)
@@ -133,6 +172,72 @@ namespace ScreenCaptureProgram
         private void cbCache_CheckedChanged(object sender, EventArgs e)
         {
             controller.Caching = cbCache.Checked;
+        }
+
+        private void btnPrevious_Click(object sender, EventArgs e)
+        {
+            index++;
+            SetImage();
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            index--;
+            SetImage();
+        }
+
+        private void SetImage()
+        {
+            if (index < controller.Screenshots.Count && index > 0)
+            {
+                SetImage(index);
+            }
+            else if (index < 0)
+            {
+                index = controller.Screenshots.Count - 1;
+                SetImage(index);
+            }
+            else
+            {
+                index = 0;
+                SetImage(index);
+            }
+        }
+
+        private void SetImage(int index)
+        {
+            if (controller.Caching && controller.Screenshots.Count > 0)
+            {
+                pbCachedImage.Image = controller.Screenshots[index].GetScreenshot();
+                gbCachedImage.Text = controller.Screenshots[index].Path.Substring(
+                                    (controller.Screenshots[index].Path.LastIndexOf("\\") + 1),
+                                    (controller.Screenshots[index].Path.Length - controller.Screenshots[index].Path.LastIndexOf("\\") - 1));
+            }
+            else if (controller.Screenshots.Count > 0)
+            {
+                pbCachedImage.Image = controller.Screenshots[index].GetScreenshot();
+                gbCachedImage.Text = controller.Screenshots[index].Path.Substring(
+                                    (controller.Screenshots[index].Path.LastIndexOf("\\") + 1),
+                                    (controller.Screenshots[index].Path.Length - controller.Screenshots[index].Path.LastIndexOf("\\") - 1));
+            }
+            else
+            {
+                gbCachedImage.Text = "Enable caching and/or capture and save some screenshots to view your cached screenshots";
+            }
+        }
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            if(controller.Screenshots.Count > 0)
+                Process.Start(@controller.Screenshots[index].Path);
+        }
+
+        private void btnOpenMap_Click(object sender, EventArgs e)
+        {
+            if (controller.Screenshots.Count > 0)
+                Process.Start(@controller.Screenshots[index].Path.Substring(
+                                    0,
+                                    controller.Screenshots[index].Path.LastIndexOf("\\") + 1));
         }
     }
 }

@@ -56,6 +56,8 @@ namespace ScreenCaptureProgram
 
         //Screenshots
         private List<TakenScreenshot> screenshots;
+        public List<TakenScreenshot> Screenshots { get { return screenshots; } }
+
         private Screenshot latestCapturedScreenshot;
 
         public Controller(ScreenshotCapturer sc)

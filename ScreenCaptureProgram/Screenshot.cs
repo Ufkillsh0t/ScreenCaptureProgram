@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ScreenCaptureProgram
 {
@@ -23,6 +24,17 @@ namespace ScreenCaptureProgram
 
         public bool Save()
         {
+            if (Bitmap != null)
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = "PNG file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+                sfd.Title = "Save captured image";
+                if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
+                {
+                    Bitmap.Save(sfd.FileName);
+                }
+                return true;
+            }
             return false;
         }
 

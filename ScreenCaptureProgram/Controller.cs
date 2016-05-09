@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
+using System.Threading;
 
 namespace ScreenCaptureProgram
 {
@@ -397,11 +398,20 @@ namespace ScreenCaptureProgram
             if (imageToClipboard)
                 SetCapturedImageToClipboard(image.Bitmap);
             if (bringFormToFront)
-                SetForegroundWindow(sc.Handle.ToInt32());
+                BringApplicationToFront();
             if (autoSave)
                 AutoSaveImage(image);
 
             sc.SetImageBoxImage(image.Bitmap);
+        }
+
+        public void BringApplicationToFront()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(5);
+                sc.Invoke(new Action(() => SetForegroundWindow(sc.Handle.ToInt32())));
+            });
         }
 
         /// <summary>
@@ -454,43 +464,18 @@ namespace ScreenCaptureProgram
         /// Saves the screenshot that was captured the latest.
         /// </summary>
         /// <returns>if it has been saved succesfully</returns>
-        public bool SaveFileDialog()
+        public bool Save()
         {
-            if (latestCapturedScreenshot != null && latestCapturedScreenshot.Bitmap != null)
+            if (latestCapturedScreenshot != null)
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = "PNG file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-                sfd.Title = "Save captured image";
-                if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
-                {
-                    latestCapturedScreenshot.Bitmap.Save(sfd.FileName);
-                }
-                return true;
+                return latestCapturedScreenshot.Save();
             }
-            return false;
-        }
-
-        /// <summary>
-        /// Saves a given screenshot.
-        /// </summary>
-        /// <param name="s">The screenshot that you want to save</param>
-        /// <returns>If the screenshot has been saved</returns>
-        public bool SaveFileDialog(Screenshot s)
-        {
-            if (s != null && s.Bitmap != null)
+            else
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = "PNG file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-                sfd.Title = "Save captured image";
-                if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
-                {
-                    s.Bitmap.Save(sfd.FileName);
-                }
-                return true;
+                MessageBox.Show("You haven't captured a screenshot");
+                return false;
             }
-            return false;
         }
-
     }
 }
 

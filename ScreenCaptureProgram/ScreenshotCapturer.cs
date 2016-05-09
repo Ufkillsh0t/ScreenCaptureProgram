@@ -39,7 +39,7 @@ namespace ScreenCaptureProgram
 
         private void btnSaveLatestImage_Click(object sender, EventArgs e)
         {
-            controller.SaveFileDialog();
+            controller.Save();
         }
 
         private void btnDrawOnDesktop_Click(object sender, EventArgs e)

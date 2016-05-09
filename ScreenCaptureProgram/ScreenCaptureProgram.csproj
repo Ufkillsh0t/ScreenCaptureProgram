@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TakenScreenshot.cs" />
     <EmbeddedResource Include="ScreenshotCapturer.resx">
       <DependentUpon>ScreenshotCapturer.cs</DependentUpon>
     </EmbeddedResource>

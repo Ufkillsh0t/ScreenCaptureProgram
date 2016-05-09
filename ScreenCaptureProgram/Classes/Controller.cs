@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ScreenCaptureProgram
 {
@@ -26,6 +27,7 @@ namespace ScreenCaptureProgram
 
         private bool imageToClipboard = true;
         private bool bringFormToFront = true;
+        private bool caching = true;
         private bool autoSave = false;
 
         //capture booleans
@@ -37,6 +39,7 @@ namespace ScreenCaptureProgram
         public bool BringFormToFront { get { return bringFormToFront; } set { bringFormToFront = value; } }
         public bool KeyCapture { get { return keyCapture; } set { keyCapture = value; } }
         public bool AutoSave { get { return autoSave; } set { autoSave = value; } }
+        public bool Caching { get { return caching; } set { caching = value; } }
 
         private bool testPress = false;
 
@@ -74,6 +77,38 @@ namespace ScreenCaptureProgram
 
             //AddKeyBindings();
             GetSettings();
+            GetTakenScreenshots();
+        }
+
+        ~Controller()
+        {
+            CacheTakenScreenshots();
+        }
+
+        public void GetTakenScreenshots()
+        {
+            string path = Application.StartupPath + "\\CachedScreenshots";
+            string file = path + "\\CachedTS.bin";
+            if (Directory.Exists(path) && File.Exists(file))
+            {
+                try
+                {
+                    using (Stream stream = File.Open(file, FileMode.Open))
+                    {
+                        BinaryFormatter bin = new BinaryFormatter();
+
+                        List<TakenScreenshot> takenScreenshots = (List<TakenScreenshot>)bin.Deserialize(stream);
+                        if(takenScreenshots != null)
+                        {
+                            screenshots = takenScreenshots;
+                        }
+                    }
+                }
+                catch (IOException e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            }
         }
 
         #region XMLSettings
@@ -127,6 +162,7 @@ namespace ScreenCaptureProgram
                                             new XElement("ImageToClipBoard", true),
                                             new XElement("BringApplicationForward", true),
                                             new XElement("ResizeFormInstant", false),
+                                            new XElement("Caching", true),
                                             new XElement("AutoSave", false),
                                             new XElement("AutoSavePath", Application.StartupPath + "\\CapturedImages"),
                                             new XElement("KeyBindings",
@@ -151,6 +187,7 @@ namespace ScreenCaptureProgram
                                 new XElement("ImageToClipBoard", imageToClipboard),
                                 new XElement("BringApplicationForward", bringFormToFront),
                                 new XElement("ResizeFormInstant", sc.resizeChecked),
+                                new XElement("Caching", caching),
                                 new XElement("AutoSave", autoSave),
                                 new XElement("AutoSavePath", autoSavePath),
                                 GetKeyBindingElements()));
@@ -191,6 +228,8 @@ namespace ScreenCaptureProgram
                     imageToClipboard = Convert.ToBoolean(node.InnerText);
                 if (node.Name == "BringApplicationForward")
                     bringFormToFront = Convert.ToBoolean(node.InnerText);
+                if (node.Name == "Caching")
+                    caching = Convert.ToBoolean(node.InnerText);
                 if (node.Name == "AutoSave")
                     autoSave = Convert.ToBoolean(node.InnerText);
                 if (node.Name == "AutoSavePath")
@@ -500,12 +539,52 @@ namespace ScreenCaptureProgram
         /// <param name="s"></param>
         public void RemoveDoubles(Screenshot s)
         {
-            foreach(TakenScreenshot ts in screenshots.ToList())
+            foreach (TakenScreenshot ts in screenshots.ToList())
             {
-                if(ts.CaptureTime.ToFileTime() == s.CaptureTime.ToFileTime())
+                if (ts.CaptureTime.ToFileTime() == s.CaptureTime.ToFileTime())
                 {
                     screenshots.Remove(ts);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Caches the taken screenshots
+        /// </summary>
+        public void CacheTakenScreenshots()
+        {
+            if (caching && screenshots != null && screenshots.Count > 0)
+            {
+                string path = Application.StartupPath + "\\CachedScreenshots";
+                if (Directory.Exists(path))
+                {
+                    CacheTakenScreenshots(path);
+                }
+                else
+                {
+                    Directory.CreateDirectory(Application.StartupPath + "\\CachedScreenshots");
+                    CacheTakenScreenshots(path);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Caches the taken screenshots to the given path.
+        /// </summary>
+        /// <param name="path">The path where you want to cache the screenshots</param>
+        private void CacheTakenScreenshots(string path)
+        {
+            try
+            {
+                using (Stream stream = File.Open(path + "\\CachedTS.bin", FileMode.Create))
+                {
+                    BinaryFormatter bin = new BinaryFormatter();
+                    bin.Serialize(stream, screenshots);
+                }
+            }
+            catch (IOException e)
+            {
+                MessageBox.Show(e.ToString());
             }
         }
     }

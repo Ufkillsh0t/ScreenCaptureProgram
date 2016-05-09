@@ -48,6 +48,7 @@
             this.cbImageToClipBoard = new System.Windows.Forms.CheckBox();
             this.gbFormSettings = new System.Windows.Forms.GroupBox();
             this.cbResize = new System.Windows.Forms.CheckBox();
+            this.cbCache = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCapturedImage)).BeginInit();
@@ -155,6 +156,7 @@
             // 
             // gbSettings
             // 
+            this.gbSettings.Controls.Add(this.cbCache);
             this.gbSettings.Controls.Add(this.gbAutoSave);
             this.gbSettings.Controls.Add(this.btnResetSettings);
             this.gbSettings.Controls.Add(this.btnSaveSettings);
@@ -271,6 +273,17 @@
             this.cbResize.Text = "Resize image at end of resizing form";
             this.cbResize.UseVisualStyleBackColor = true;
             // 
+            // cbCache
+            // 
+            this.cbCache.AutoSize = true;
+            this.cbCache.Location = new System.Drawing.Point(7, 67);
+            this.cbCache.Name = "cbCache";
+            this.cbCache.Size = new System.Drawing.Size(149, 17);
+            this.cbCache.TabIndex = 7;
+            this.cbCache.Text = "Cache saved screenshots";
+            this.cbCache.UseVisualStyleBackColor = true;
+            this.cbCache.CheckedChanged += new System.EventHandler(this.cbCache_CheckedChanged);
+            // 
             // ScreenshotCapturer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -317,6 +330,7 @@
         private System.Windows.Forms.Button btnAutoSavePath;
         private System.Windows.Forms.TextBox tbAutoSaveDirectory;
         private System.Windows.Forms.CheckBox cbAutoSave;
+        private System.Windows.Forms.CheckBox cbCache;
     }
 }
 

@@ -24,6 +24,7 @@ namespace ScreenCaptureProgram
             cbBringApplicationForward.Checked = controller.BringFormToFront;
             cbImageToClipBoard.Checked = controller.ImageToClipboard;
             cbAutoSave.Checked = controller.AutoSave;
+            cbCache.Checked = controller.Caching;
             tbAutoSaveDirectory.Text = controller.AutoSavePath;
         }
 
@@ -127,6 +128,11 @@ namespace ScreenCaptureProgram
         {
             controller.SetAutoSavePath();
             tbAutoSaveDirectory.Text = controller.AutoSavePath;
+        }
+
+        private void cbCache_CheckedChanged(object sender, EventArgs e)
+        {
+            controller.Caching = cbCache.Checked;
         }
     }
 }

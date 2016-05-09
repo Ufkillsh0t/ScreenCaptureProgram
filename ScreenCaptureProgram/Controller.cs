@@ -41,6 +41,7 @@ namespace ScreenCaptureProgram
 
         //Autosave path
         private string autoSavePath;
+        public string AutoSavePath { get { return autoSavePath; } }
 
         //Capture points.
         public Point startPoint;
@@ -126,6 +127,7 @@ namespace ScreenCaptureProgram
                                             new XElement("BringApplicationForward", true),
                                             new XElement("ResizeFormInstant", false),
                                             new XElement("AutoSave", false),
+                                            new XElement("AutoSavePath", Application.StartupPath + "\\CapturedImages"),
                                             new XElement("KeyBindings",
                                                 new XElement("KeyBind",
                                                     new XElement("ID", 1),
@@ -149,6 +151,7 @@ namespace ScreenCaptureProgram
                                 new XElement("BringApplicationForward", bringFormToFront),
                                 new XElement("ResizeFormInstant", sc.resizeChecked),
                                 new XElement("AutoSave", autoSave),
+                                new XElement("AutoSavePath", autoSavePath),
                                 GetKeyBindingElements()));
             doc.Save(path + "\\Settings.xml");
         }
@@ -189,6 +192,18 @@ namespace ScreenCaptureProgram
                     bringFormToFront = Convert.ToBoolean(node.InnerText);
                 if (node.Name == "AutoSave")
                     autoSave = Convert.ToBoolean(node.InnerText);
+                if (node.Name == "AutoSavePath")
+                {
+                    string value = node.InnerText;
+                    if(value != null && Directory.Exists(value))
+                    {
+                        autoSavePath = value;
+                    }
+                    else
+                    {
+                        SetAutoSavePath();
+                    }
+                }
                 if (node.Name == "ResizeFormInstant")
                 {
                     bool value = Convert.ToBoolean(node.InnerText);

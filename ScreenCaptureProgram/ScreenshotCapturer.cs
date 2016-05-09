@@ -24,6 +24,7 @@ namespace ScreenCaptureProgram
             cbBringApplicationForward.Checked = controller.BringFormToFront;
             cbImageToClipBoard.Checked = controller.ImageToClipboard;
             cbAutoSave.Checked = controller.AutoSave;
+            tbAutoSaveDirectory.Text = controller.AutoSavePath;
         }
 
         private void btnCaptureDesktop_Click(object sender, EventArgs e)
@@ -120,6 +121,12 @@ namespace ScreenCaptureProgram
         private void cbAutoSave_CheckedChanged(object sender, EventArgs e)
         {
             controller.AutoSave = cbAutoSave.Checked;
+        }
+
+        private void btnAutoSavePath_Click(object sender, EventArgs e)
+        {
+            controller.SetAutoSavePath();
+            tbAutoSaveDirectory.Text = controller.AutoSavePath;
         }
     }
 }

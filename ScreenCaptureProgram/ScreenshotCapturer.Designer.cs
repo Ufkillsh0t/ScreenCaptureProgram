@@ -188,6 +188,7 @@
             this.btnAutoSavePath.TabIndex = 2;
             this.btnAutoSavePath.Text = "Set path";
             this.btnAutoSavePath.UseVisualStyleBackColor = true;
+            this.btnAutoSavePath.Click += new System.EventHandler(this.btnAutoSavePath_Click);
             // 
             // tbAutoSaveDirectory
             // 

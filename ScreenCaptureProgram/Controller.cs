@@ -39,6 +39,9 @@ namespace ScreenCaptureProgram
 
         private bool testPress = false;
 
+        //Autosave path
+        private string autoSavePath;
+
         //Capture points.
         public Point startPoint;
         public Point endPoint;
@@ -217,6 +220,7 @@ namespace ScreenCaptureProgram
 
         #endregion
 
+        #region HookEvents
         private void MouseHook_LeftButtonUp(MouseHook.MSLLHOOKSTRUCT mouseStruct)
         {
             if (capturing && cancelled)
@@ -272,6 +276,7 @@ namespace ScreenCaptureProgram
                 }
             }
         }
+        #endregion
 
         /// <summary>
         /// Executes a certain command/function
@@ -303,7 +308,7 @@ namespace ScreenCaptureProgram
             g.CopyFromScreen(Point.Empty, Point.Empty, rect.Size);
             latestCapturedScreenshot = new Screenshot(image, DateTime.Now);
             screenshots.Add(latestCapturedScreenshot);
-            CapturedImage(image);
+            CapturedImage(latestCapturedScreenshot);
         }
 
         /// <summary>
@@ -365,17 +370,60 @@ namespace ScreenCaptureProgram
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, rect.Size);
             latestCapturedScreenshot = new Screenshot(image, DateTime.Now);
             screenshots.Add(latestCapturedScreenshot);
-            CapturedImage(image);
+            CapturedImage(latestCapturedScreenshot);
         }
 
-        private void CapturedImage(Bitmap image)
+        /// <summary>
+        /// Options after capturing a scree shot.
+        /// </summary>
+        /// <param name="image">The captured image</param>
+        private void CapturedImage(Screenshot image)
         {
             if (imageToClipboard)
-                SetCapturedImageToClipboard(image);
+                SetCapturedImageToClipboard(image.Bitmap);
             if (bringFormToFront)
                 SetForegroundWindow(sc.Handle.ToInt32());
+            if (autoSave)
+                AutoSaveImage(image);
 
-            sc.SetImageBoxImage(image);
+            sc.SetImageBoxImage(image.Bitmap);
+        }
+
+        /// <summary>
+        /// Saves the image to the autoSave map.
+        /// </summary>
+        /// <param name="image"></param>
+        public void AutoSaveImage(Screenshot image)
+        {
+            if(autoSavePath != null)
+            {
+                image.Bitmap.Save(autoSavePath + "\\" + image.ToString() + ".png");
+            }
+            else
+            {
+                string path = Application.StartupPath + "\\CapturedImages";
+                if (Directory.Exists(path))
+                {
+                    image.Bitmap.Save(path + "\\" + image.ToString() + ".png");
+                }
+                else
+                {
+                    Directory.CreateDirectory(path);
+                    image.Bitmap.Save(path + "\\" + image.ToString() + ".png");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the autosave path.
+        /// </summary>
+        public void SetAutoSavePath()
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if(fbd.ShowDialog() == DialogResult.OK)
+            {
+                autoSavePath = fbd.SelectedPath;
+            }
         }
 
         /// <summary>
@@ -396,7 +444,7 @@ namespace ScreenCaptureProgram
             if (latestCapturedScreenshot != null && latestCapturedScreenshot.Bitmap != null)
             {
                 SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = ".png file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+                sfd.Filter = "PNG file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
                 sfd.Title = "Save captured image";
                 if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
                 {
@@ -407,12 +455,17 @@ namespace ScreenCaptureProgram
             return false;
         }
 
+        /// <summary>
+        /// Saves a given screenshot.
+        /// </summary>
+        /// <param name="s">The screenshot that you want to save</param>
+        /// <returns>If the screenshot has been saved</returns>
         public bool SaveFileDialog(Screenshot s)
         {
             if (s != null && s.Bitmap != null)
             {
                 SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = ".png file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+                sfd.Filter = "PNG file|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
                 sfd.Title = "Save captured image";
                 if (sfd.ShowDialog() == DialogResult.OK && sfd.FileName != "")
                 {

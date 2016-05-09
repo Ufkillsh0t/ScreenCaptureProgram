@@ -23,6 +23,7 @@ namespace ScreenCaptureProgram
             controller = new Controller(this);
             cbBringApplicationForward.Checked = controller.BringFormToFront;
             cbImageToClipBoard.Checked = controller.ImageToClipboard;
+            cbAutoSave.Checked = controller.AutoSave;
         }
 
         private void btnCaptureDesktop_Click(object sender, EventArgs e)
@@ -114,6 +115,11 @@ namespace ScreenCaptureProgram
             cbAutoSave.Checked = controller.AutoSave;
             cbBringApplicationForward.Checked = controller.BringFormToFront;
             cbImageToClipBoard.Checked = controller.ImageToClipboard;
+        }
+
+        private void cbAutoSave_CheckedChanged(object sender, EventArgs e)
+        {
+            controller.AutoSave = cbAutoSave.Checked;
         }
     }
 }

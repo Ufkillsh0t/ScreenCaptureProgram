@@ -25,5 +25,10 @@ namespace ScreenCaptureProgram
         {
             return false;
         }
+
+        public override string ToString()
+        {
+            return captureTime.ToFileTime().ToString();
+        }
     }
 }

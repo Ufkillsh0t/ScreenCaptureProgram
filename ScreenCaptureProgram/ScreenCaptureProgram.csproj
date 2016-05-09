@@ -46,12 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller.cs" />
+    <Compile Include="Classes\Controller.cs" />
     <Compile Include="Hooks\KeyboardHook.cs" />
     <Compile Include="Hooks\MouseHook.cs" />
-    <Compile Include="Key.cs" />
-    <Compile Include="KeyBinding.cs" />
-    <Compile Include="Screenshot.cs" />
+    <Compile Include="Classes\Key.cs" />
+    <Compile Include="Classes\KeyBinding.cs" />
+    <Compile Include="Classes\Screenshot.cs" />
     <Compile Include="ScreenshotCapturer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,7 +60,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TakenScreenshot.cs" />
+    <Compile Include="Classes\TakenScreenshot.cs" />
     <EmbeddedResource Include="ScreenshotCapturer.resx">
       <DependentUpon>ScreenshotCapturer.cs</DependentUpon>
     </EmbeddedResource>

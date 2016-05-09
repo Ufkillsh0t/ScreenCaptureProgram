@@ -22,7 +22,7 @@ namespace ScreenCaptureProgram
             this.bitmap = bitmap;
         }
 
-        public bool Save()
+        public string Save()
         {
             if (Bitmap != null)
             {
@@ -33,9 +33,9 @@ namespace ScreenCaptureProgram
                 {
                     Bitmap.Save(sfd.FileName);
                 }
-                return true;
+                return sfd.FileName;
             }
-            return false;
+            return null;
         }
 
         public override string ToString()

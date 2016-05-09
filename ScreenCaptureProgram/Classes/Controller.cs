@@ -52,12 +52,12 @@ namespace ScreenCaptureProgram
         private List<KeyBinding> keyBindings;
 
         //Screenshots
-        private List<Screenshot> screenshots;
+        private List<TakenScreenshot> screenshots;
         private Screenshot latestCapturedScreenshot;
 
         public Controller(ScreenshotCapturer sc)
         {
-            screenshots = new List<Screenshot>();
+            screenshots = new List<TakenScreenshot>();
             this.sc = sc;
 
             keyboardHook = new KeyboardHook();
@@ -196,7 +196,7 @@ namespace ScreenCaptureProgram
                 if (node.Name == "AutoSavePath")
                 {
                     string value = node.InnerText;
-                    if(value != null && Directory.Exists(value))
+                    if (value != null && Directory.Exists(value))
                     {
                         autoSavePath = value;
                     }
@@ -323,7 +323,6 @@ namespace ScreenCaptureProgram
             Graphics g = Graphics.FromImage(image);
             g.CopyFromScreen(Point.Empty, Point.Empty, rect.Size);
             latestCapturedScreenshot = new Screenshot(image, DateTime.Now);
-            screenshots.Add(latestCapturedScreenshot);
             CapturedImage(latestCapturedScreenshot);
         }
 
@@ -385,7 +384,6 @@ namespace ScreenCaptureProgram
             Graphics g = Graphics.FromImage(image);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, rect.Size);
             latestCapturedScreenshot = new Screenshot(image, DateTime.Now);
-            screenshots.Add(latestCapturedScreenshot);
             CapturedImage(latestCapturedScreenshot);
         }
 
@@ -400,11 +398,14 @@ namespace ScreenCaptureProgram
             if (bringFormToFront)
                 BringApplicationToFront();
             if (autoSave)
-                AutoSaveImage(image);
+                screenshots.Add(new TakenScreenshot(AutoSaveImage(image), image.CaptureTime));
 
             sc.SetImageBoxImage(image.Bitmap);
         }
 
+        /// <summary>
+        /// Brings the form to the front.
+        /// </summary>
         public void BringApplicationToFront()
         {
             Task.Factory.StartNew(() =>
@@ -418,23 +419,29 @@ namespace ScreenCaptureProgram
         /// Saves the image to the autoSave map.
         /// </summary>
         /// <param name="image"></param>
-        public void AutoSaveImage(Screenshot image)
+        public string AutoSaveImage(Screenshot image)
         {
-            if(autoSavePath != null)
+            if (autoSavePath != null)
             {
-                image.Bitmap.Save(autoSavePath + "\\" + image.ToString() + ".png");
+                string imagePath = autoSavePath + "\\" + image.ToString() + ".png";
+                image.Bitmap.Save(imagePath);
+                return imagePath;
             }
             else
             {
                 string path = Application.StartupPath + "\\CapturedImages";
                 if (Directory.Exists(path))
                 {
-                    image.Bitmap.Save(path + "\\" + image.ToString() + ".png");
+                    string imagePath = path + "\\" + image.ToString() + ".png";
+                    image.Bitmap.Save(imagePath);
+                    return imagePath;
                 }
                 else
                 {
                     Directory.CreateDirectory(path);
-                    image.Bitmap.Save(path + "\\" + image.ToString() + ".png");
+                    string imagePath = path + "\\" + image.ToString() + ".png";
+                    image.Bitmap.Save(imagePath);
+                    return imagePath;
                 }
             }
         }
@@ -445,7 +452,7 @@ namespace ScreenCaptureProgram
         public void SetAutoSavePath()
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-            if(fbd.ShowDialog() == DialogResult.OK)
+            if (fbd.ShowDialog() == DialogResult.OK)
             {
                 autoSavePath = fbd.SelectedPath;
             }
@@ -468,12 +475,37 @@ namespace ScreenCaptureProgram
         {
             if (latestCapturedScreenshot != null)
             {
-                return latestCapturedScreenshot.Save();
+                string path = latestCapturedScreenshot.Save();
+                if (path != null)
+                {
+                    RemoveDoubles(latestCapturedScreenshot);
+                    screenshots.Add(new TakenScreenshot(path, latestCapturedScreenshot.CaptureTime));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
                 MessageBox.Show("You haven't captured a screenshot");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Removes double images
+        /// </summary>
+        /// <param name="s"></param>
+        public void RemoveDoubles(Screenshot s)
+        {
+            foreach(TakenScreenshot ts in screenshots.ToList())
+            {
+                if(ts.CaptureTime.ToFileTime() == s.CaptureTime.ToFileTime())
+                {
+                    screenshots.Remove(ts);
+                }
             }
         }
     }

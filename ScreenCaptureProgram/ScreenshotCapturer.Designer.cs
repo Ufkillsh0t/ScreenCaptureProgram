@@ -30,14 +30,20 @@
         {
             this.btnCaptureDesktop = new System.Windows.Forms.Button();
             this.btnCapturePartDesktop = new System.Windows.Forms.Button();
-            this.btnDrawOnDesktop = new System.Windows.Forms.Button();
             this.btnSaveLatestImage = new System.Windows.Forms.Button();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabImage = new System.Windows.Forms.TabPage();
             this.pbCapturedImage = new System.Windows.Forms.PictureBox();
             this.tabCapturedImages = new System.Windows.Forms.TabPage();
+            this.btnOpenMap = new System.Windows.Forms.Button();
+            this.gbCachedImage = new System.Windows.Forms.GroupBox();
+            this.pbCachedImage = new System.Windows.Forms.PictureBox();
+            this.btnOpen = new System.Windows.Forms.Button();
+            this.btnNext = new System.Windows.Forms.Button();
+            this.btnPrevious = new System.Windows.Forms.Button();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.gbSettings = new System.Windows.Forms.GroupBox();
+            this.cbCache = new System.Windows.Forms.CheckBox();
             this.gbAutoSave = new System.Windows.Forms.GroupBox();
             this.btnAutoSavePath = new System.Windows.Forms.Button();
             this.tbAutoSaveDirectory = new System.Windows.Forms.TextBox();
@@ -48,24 +54,20 @@
             this.cbImageToClipBoard = new System.Windows.Forms.CheckBox();
             this.gbFormSettings = new System.Windows.Forms.GroupBox();
             this.cbResize = new System.Windows.Forms.CheckBox();
-            this.cbCache = new System.Windows.Forms.CheckBox();
-            this.pbCachedImage = new System.Windows.Forms.PictureBox();
-            this.btnPrevious = new System.Windows.Forms.Button();
-            this.btnNext = new System.Windows.Forms.Button();
-            this.btnOpen = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.gbCachedImage = new System.Windows.Forms.GroupBox();
-            this.btnOpenMap = new System.Windows.Forms.Button();
+            this.gbKeybindings = new System.Windows.Forms.GroupBox();
+            this.lblKeybind1 = new System.Windows.Forms.Label();
+            this.lblKeybind2 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabImage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCapturedImage)).BeginInit();
             this.tabCapturedImages.SuspendLayout();
+            this.gbCachedImage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCachedImage)).BeginInit();
             this.tabSettings.SuspendLayout();
             this.gbSettings.SuspendLayout();
             this.gbAutoSave.SuspendLayout();
             this.gbFormSettings.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCachedImage)).BeginInit();
-            this.gbCachedImage.SuspendLayout();
+            this.gbKeybindings.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCaptureDesktop
@@ -88,16 +90,6 @@
             this.btnCapturePartDesktop.UseVisualStyleBackColor = true;
             this.btnCapturePartDesktop.Click += new System.EventHandler(this.btnCapturePartDesktop_Click);
             // 
-            // btnDrawOnDesktop
-            // 
-            this.btnDrawOnDesktop.Location = new System.Drawing.Point(6, 35);
-            this.btnDrawOnDesktop.Name = "btnDrawOnDesktop";
-            this.btnDrawOnDesktop.Size = new System.Drawing.Size(75, 23);
-            this.btnDrawOnDesktop.TabIndex = 2;
-            this.btnDrawOnDesktop.Text = "Draw";
-            this.btnDrawOnDesktop.UseVisualStyleBackColor = true;
-            this.btnDrawOnDesktop.Click += new System.EventHandler(this.btnDrawOnDesktop_Click);
-            // 
             // btnSaveLatestImage
             // 
             this.btnSaveLatestImage.Location = new System.Drawing.Point(192, 6);
@@ -113,7 +105,7 @@
             this.tabControl.Controls.Add(this.tabImage);
             this.tabControl.Controls.Add(this.tabCapturedImages);
             this.tabControl.Controls.Add(this.tabSettings);
-            this.tabControl.Location = new System.Drawing.Point(10, 10);
+            this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(357, 370);
@@ -122,11 +114,9 @@
             // 
             // tabImage
             // 
-            this.tabImage.Controls.Add(this.btnClear);
             this.tabImage.Controls.Add(this.pbCapturedImage);
             this.tabImage.Controls.Add(this.btnCaptureDesktop);
             this.tabImage.Controls.Add(this.btnSaveLatestImage);
-            this.tabImage.Controls.Add(this.btnDrawOnDesktop);
             this.tabImage.Controls.Add(this.btnCapturePartDesktop);
             this.tabImage.Location = new System.Drawing.Point(4, 22);
             this.tabImage.Name = "tabImage";
@@ -138,9 +128,9 @@
             // 
             // pbCapturedImage
             // 
-            this.pbCapturedImage.Location = new System.Drawing.Point(5, 65);
+            this.pbCapturedImage.Location = new System.Drawing.Point(5, 35);
             this.pbCapturedImage.Name = "pbCapturedImage";
-            this.pbCapturedImage.Size = new System.Drawing.Size(337, 274);
+            this.pbCapturedImage.Size = new System.Drawing.Size(337, 304);
             this.pbCapturedImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbCapturedImage.TabIndex = 5;
             this.pbCapturedImage.TabStop = false;
@@ -160,6 +150,65 @@
             this.tabCapturedImages.Text = "CapturedImages";
             this.tabCapturedImages.UseVisualStyleBackColor = true;
             // 
+            // btnOpenMap
+            // 
+            this.btnOpenMap.Location = new System.Drawing.Point(258, 306);
+            this.btnOpenMap.Name = "btnOpenMap";
+            this.btnOpenMap.Size = new System.Drawing.Size(75, 23);
+            this.btnOpenMap.TabIndex = 7;
+            this.btnOpenMap.Text = "Open map";
+            this.btnOpenMap.UseVisualStyleBackColor = true;
+            this.btnOpenMap.Click += new System.EventHandler(this.btnOpenMap_Click);
+            // 
+            // gbCachedImage
+            // 
+            this.gbCachedImage.Controls.Add(this.pbCachedImage);
+            this.gbCachedImage.Location = new System.Drawing.Point(7, 6);
+            this.gbCachedImage.Name = "gbCachedImage";
+            this.gbCachedImage.Size = new System.Drawing.Size(336, 294);
+            this.gbCachedImage.TabIndex = 6;
+            this.gbCachedImage.TabStop = false;
+            this.gbCachedImage.Text = "groupBox1";
+            // 
+            // pbCachedImage
+            // 
+            this.pbCachedImage.Location = new System.Drawing.Point(6, 19);
+            this.pbCachedImage.Name = "pbCachedImage";
+            this.pbCachedImage.Size = new System.Drawing.Size(324, 269);
+            this.pbCachedImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbCachedImage.TabIndex = 0;
+            this.pbCachedImage.TabStop = false;
+            // 
+            // btnOpen
+            // 
+            this.btnOpen.Location = new System.Drawing.Point(177, 306);
+            this.btnOpen.Name = "btnOpen";
+            this.btnOpen.Size = new System.Drawing.Size(75, 23);
+            this.btnOpen.TabIndex = 3;
+            this.btnOpen.Text = "Open";
+            this.btnOpen.UseVisualStyleBackColor = true;
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
+            // 
+            // btnNext
+            // 
+            this.btnNext.Location = new System.Drawing.Point(96, 306);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(75, 23);
+            this.btnNext.TabIndex = 2;
+            this.btnNext.Text = "Next";
+            this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            // 
+            // btnPrevious
+            // 
+            this.btnPrevious.Location = new System.Drawing.Point(15, 306);
+            this.btnPrevious.Name = "btnPrevious";
+            this.btnPrevious.Size = new System.Drawing.Size(75, 23);
+            this.btnPrevious.TabIndex = 1;
+            this.btnPrevious.Text = "Previous";
+            this.btnPrevious.UseVisualStyleBackColor = true;
+            this.btnPrevious.Click += new System.EventHandler(this.btnPrevious_Click);
+            // 
             // tabSettings
             // 
             this.tabSettings.Controls.Add(this.gbSettings);
@@ -172,6 +221,7 @@
             // 
             // gbSettings
             // 
+            this.gbSettings.Controls.Add(this.gbKeybindings);
             this.gbSettings.Controls.Add(this.cbCache);
             this.gbSettings.Controls.Add(this.gbAutoSave);
             this.gbSettings.Controls.Add(this.btnResetSettings);
@@ -186,14 +236,25 @@
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
             // 
+            // cbCache
+            // 
+            this.cbCache.AutoSize = true;
+            this.cbCache.Location = new System.Drawing.Point(7, 67);
+            this.cbCache.Name = "cbCache";
+            this.cbCache.Size = new System.Drawing.Size(149, 17);
+            this.cbCache.TabIndex = 7;
+            this.cbCache.Text = "Cache saved screenshots";
+            this.cbCache.UseVisualStyleBackColor = true;
+            this.cbCache.CheckedChanged += new System.EventHandler(this.cbCache_CheckedChanged);
+            // 
             // gbAutoSave
             // 
             this.gbAutoSave.Controls.Add(this.btnAutoSavePath);
             this.gbAutoSave.Controls.Add(this.tbAutoSaveDirectory);
             this.gbAutoSave.Controls.Add(this.cbAutoSave);
-            this.gbAutoSave.Location = new System.Drawing.Point(7, 120);
+            this.gbAutoSave.Location = new System.Drawing.Point(7, 90);
             this.gbAutoSave.Name = "gbAutoSave";
-            this.gbAutoSave.Size = new System.Drawing.Size(329, 85);
+            this.gbAutoSave.Size = new System.Drawing.Size(329, 73);
             this.gbAutoSave.TabIndex = 6;
             this.gbAutoSave.TabStop = false;
             this.gbAutoSave.Text = "Save captured screenshots automatically";
@@ -272,9 +333,9 @@
             // gbFormSettings
             // 
             this.gbFormSettings.Controls.Add(this.cbResize);
-            this.gbFormSettings.Location = new System.Drawing.Point(6, 211);
+            this.gbFormSettings.Location = new System.Drawing.Point(7, 169);
             this.gbFormSettings.Name = "gbFormSettings";
-            this.gbFormSettings.Size = new System.Drawing.Size(330, 81);
+            this.gbFormSettings.Size = new System.Drawing.Size(330, 44);
             this.gbFormSettings.TabIndex = 1;
             this.gbFormSettings.TabStop = false;
             this.gbFormSettings.Text = "FormSettings";
@@ -289,85 +350,34 @@
             this.cbResize.Text = "Resize image at end of resizing form";
             this.cbResize.UseVisualStyleBackColor = true;
             // 
-            // cbCache
+            // gbKeybindings
             // 
-            this.cbCache.AutoSize = true;
-            this.cbCache.Location = new System.Drawing.Point(7, 67);
-            this.cbCache.Name = "cbCache";
-            this.cbCache.Size = new System.Drawing.Size(149, 17);
-            this.cbCache.TabIndex = 7;
-            this.cbCache.Text = "Cache saved screenshots";
-            this.cbCache.UseVisualStyleBackColor = true;
-            this.cbCache.CheckedChanged += new System.EventHandler(this.cbCache_CheckedChanged);
+            this.gbKeybindings.Controls.Add(this.lblKeybind2);
+            this.gbKeybindings.Controls.Add(this.lblKeybind1);
+            this.gbKeybindings.Location = new System.Drawing.Point(7, 220);
+            this.gbKeybindings.Name = "gbKeybindings";
+            this.gbKeybindings.Size = new System.Drawing.Size(329, 72);
+            this.gbKeybindings.TabIndex = 8;
+            this.gbKeybindings.TabStop = false;
+            this.gbKeybindings.Text = "Keybindings";
             // 
-            // pbCachedImage
+            // lblKeybind1
             // 
-            this.pbCachedImage.Location = new System.Drawing.Point(6, 19);
-            this.pbCachedImage.Name = "pbCachedImage";
-            this.pbCachedImage.Size = new System.Drawing.Size(324, 269);
-            this.pbCachedImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbCachedImage.TabIndex = 0;
-            this.pbCachedImage.TabStop = false;
+            this.lblKeybind1.AutoSize = true;
+            this.lblKeybind1.Location = new System.Drawing.Point(17, 20);
+            this.lblKeybind1.Name = "lblKeybind1";
+            this.lblKeybind1.Size = new System.Drawing.Size(228, 13);
+            this.lblKeybind1.TabIndex = 0;
+            this.lblKeybind1.Text = "Capture entire primary screen: CTRL + ALT + 6";
             // 
-            // btnPrevious
+            // lblKeybind2
             // 
-            this.btnPrevious.Location = new System.Drawing.Point(15, 306);
-            this.btnPrevious.Name = "btnPrevious";
-            this.btnPrevious.Size = new System.Drawing.Size(75, 23);
-            this.btnPrevious.TabIndex = 1;
-            this.btnPrevious.Text = "Previous";
-            this.btnPrevious.UseVisualStyleBackColor = true;
-            this.btnPrevious.Click += new System.EventHandler(this.btnPrevious_Click);
-            // 
-            // btnNext
-            // 
-            this.btnNext.Location = new System.Drawing.Point(96, 306);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(75, 23);
-            this.btnNext.TabIndex = 2;
-            this.btnNext.Text = "Next";
-            this.btnNext.UseVisualStyleBackColor = true;
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
-            // 
-            // btnOpen
-            // 
-            this.btnOpen.Location = new System.Drawing.Point(177, 306);
-            this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(75, 23);
-            this.btnOpen.TabIndex = 3;
-            this.btnOpen.Text = "Open";
-            this.btnOpen.UseVisualStyleBackColor = true;
-            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
-            // 
-            // btnClear
-            // 
-            this.btnClear.Location = new System.Drawing.Point(87, 35);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(75, 23);
-            this.btnClear.TabIndex = 6;
-            this.btnClear.Text = "Clear";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // gbCachedImage
-            // 
-            this.gbCachedImage.Controls.Add(this.pbCachedImage);
-            this.gbCachedImage.Location = new System.Drawing.Point(7, 6);
-            this.gbCachedImage.Name = "gbCachedImage";
-            this.gbCachedImage.Size = new System.Drawing.Size(336, 294);
-            this.gbCachedImage.TabIndex = 6;
-            this.gbCachedImage.TabStop = false;
-            this.gbCachedImage.Text = "groupBox1";
-            // 
-            // btnOpenMap
-            // 
-            this.btnOpenMap.Location = new System.Drawing.Point(258, 306);
-            this.btnOpenMap.Name = "btnOpenMap";
-            this.btnOpenMap.Size = new System.Drawing.Size(75, 23);
-            this.btnOpenMap.TabIndex = 7;
-            this.btnOpenMap.Text = "Open map";
-            this.btnOpenMap.UseVisualStyleBackColor = true;
-            this.btnOpenMap.Click += new System.EventHandler(this.btnOpenMap_Click);
+            this.lblKeybind2.AutoSize = true;
+            this.lblKeybind2.Location = new System.Drawing.Point(17, 42);
+            this.lblKeybind2.Name = "lblKeybind2";
+            this.lblKeybind2.Size = new System.Drawing.Size(205, 13);
+            this.lblKeybind2.TabIndex = 1;
+            this.lblKeybind2.Text = "Capture part of dekstop: CTRL  + ALT + 5";
             // 
             // ScreenshotCapturer
             // 
@@ -383,6 +393,8 @@
             this.tabImage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbCapturedImage)).EndInit();
             this.tabCapturedImages.ResumeLayout(false);
+            this.gbCachedImage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbCachedImage)).EndInit();
             this.tabSettings.ResumeLayout(false);
             this.gbSettings.ResumeLayout(false);
             this.gbSettings.PerformLayout();
@@ -390,8 +402,8 @@
             this.gbAutoSave.PerformLayout();
             this.gbFormSettings.ResumeLayout(false);
             this.gbFormSettings.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCachedImage)).EndInit();
-            this.gbCachedImage.ResumeLayout(false);
+            this.gbKeybindings.ResumeLayout(false);
+            this.gbKeybindings.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -400,7 +412,6 @@
 
         private System.Windows.Forms.Button btnCaptureDesktop;
         private System.Windows.Forms.Button btnCapturePartDesktop;
-        private System.Windows.Forms.Button btnDrawOnDesktop;
         private System.Windows.Forms.Button btnSaveLatestImage;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabImage;
@@ -423,9 +434,11 @@
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Button btnPrevious;
         private System.Windows.Forms.PictureBox pbCachedImage;
-        private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.GroupBox gbCachedImage;
         private System.Windows.Forms.Button btnOpenMap;
+        private System.Windows.Forms.GroupBox gbKeybindings;
+        private System.Windows.Forms.Label lblKeybind2;
+        private System.Windows.Forms.Label lblKeybind1;
     }
 }
 

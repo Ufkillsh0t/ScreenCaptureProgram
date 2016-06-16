@@ -100,8 +100,15 @@ namespace ScreenCaptureProgram
                         BinaryFormatter bin = new BinaryFormatter();
 
                         List<TakenScreenshot> takenScreenshots = (List<TakenScreenshot>)bin.Deserialize(stream);
-                        if(takenScreenshots != null)
+                        if (takenScreenshots != null)
                         {
+                            foreach (TakenScreenshot ts in takenScreenshots.ToList())
+                            {
+                                if (!File.Exists(ts.Path))
+                                {
+                                    takenScreenshots.Remove(ts);
+                                }
+                            }
                             screenshots = takenScreenshots;
                         }
                     }

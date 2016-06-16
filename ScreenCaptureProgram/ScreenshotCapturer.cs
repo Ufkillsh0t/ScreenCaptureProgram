@@ -51,6 +51,7 @@ namespace ScreenCaptureProgram
             controller.Save();
         }
 
+        /*
         private void btnDrawOnDesktop_Click(object sender, EventArgs e)
         {
             Point pt = Cursor.Position;
@@ -62,7 +63,7 @@ namespace ScreenCaptureProgram
             Point pt = Cursor.Position;
             Graphics g = Graphics.FromHwnd(IntPtr.Zero);
             dekstop.Restore(state);
-        }
+        }*/
 
         public void SetImageBoxImage(Bitmap b)
         {
